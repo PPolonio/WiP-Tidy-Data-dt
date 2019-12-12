@@ -127,6 +127,19 @@ setnames(wip, c("Country.Name", "Country.Code"),c("Country", "Code"))
 head(names(wip))
 tail(names(wip))
 
+# Reshape to long format: for each country (column) data must becomes a row, and remove the missing data
+WP <- melt(wip,
+           id.vars = c("Country", "Code"),
+           measure = patterns("^X"),
+           variable.name = "YearC",
+           value.name = c("pctWiP"),
+           na.rm = TRUE)
+# Creating numeric variable of Year and a Ratio of men to women in parlament
+WP[, `:=`(Year=as.numeric(gsub("[^[:digit:].]", "", YearC)),
+          Ratio= (100-pctWiP)/pctWiP)][, YearC:=NULL]
+setcolorder(WP, c("Country", "Code", "Year", "pctWiP", "Ratio"))
+WP
+
 ```
 
 
